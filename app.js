@@ -2,10 +2,10 @@
 
 'use strict';
 
-var fs          = require('fs');                        // https://nodejs.org/api/fs.html
-var _           = require('lodash');                    // https://www.npmjs.com/package/lodash
-var NodeCache   = require('node-cache');                // https://www.npmjs.com/package/node-cache
-var TelegramBot = require('node-telegram-bot-api');     // https://www.npmjs.com/package/node-telegram-bot-api
+var _               = require('lodash');                    // https://www.npmjs.com/package/lodash
+var fs              = require('fs');                        // https://nodejs.org/api/fs.html
+var NodeCache       = require('node-cache');                // https://www.npmjs.com/package/node-cache
+var TelegramBot     = require('node-telegram-bot-api');     // https://www.npmjs.com/package/node-telegram-bot-api
 
 /*
  * libs
@@ -19,7 +19,8 @@ var acl    = require(__dirname + '/lib/acl');           // set up the acl file
 /*
  * modules
  */
-var SonarrMessage = require(__dirname + '/modules/SonarrMessage');
+var SonarrMessage       = require(__dirname + '/modules/SonarrMessage');
+var CouchPotatoMessage  = require(__dirname + '/modules/CouchPotatoMessage');
 
 /*
  * modules
@@ -77,7 +78,8 @@ bot.on('message', function(msg) {
   var user    = msg.from;
   var message = msg.text;
  
-  var sonarr = new SonarrMessage(bot, user, cache);
+  var sonarr      = new SonarrMessage(bot, user, cache);
+  var couchpotato = new SonarrMessage(bot, user, cache);
 
   if (/^\/library\s?(.+)?$/g.test(message)) {
     if(isAuthorized(user.id)){
@@ -131,12 +133,25 @@ bot.on('message', function(msg) {
 
 
   /*
-   * /query command
+   * /serie command
    */
-  if (/^\/[Qq](uery)? (.+)$/g.test(message)) {
+  if (/^\/[Ss](erie)? (.+)$/g.test(message)) {
     if(isAuthorized(user.id)){
-       var seriesName = /^\/[Qq](uery)? (.+)/g.exec(message)[2] || null;
+       var seriesName = /^\/[Ss](erie)? (.+)/g.exec(message)[2] || null;
        return sonarr.sendSeriesList(seriesName);
+    } else {
+       return replyWithError(user.id, new Error(i18n.__('notAuthorized')));     
+    }
+  }
+
+
+  /*
+   * /film command
+   */
+  if (/^\/[Ff](ilm)? (.+)$/g.test(message)) {
+    if(isAuthorized(user.id)){
+       var movieName = /^\/[Ff](ilm)? (.+)/g.exec(message)[2] || null;
+       return couchpotato.sendMoviesList(movieName);
     } else {
        return replyWithError(user.id, new Error(i18n.__('notAuthorized')));     
     }
@@ -145,6 +160,10 @@ bot.on('message', function(msg) {
   // get the current cache state
   var currentState = cache.get('state' + user.id);
 
+  /*
+   * Admin states   
+   */
+  
   if (currentState === state.admin.REVOKE) {
     verifyUser(user.id);
     return handleRevokeUser(user.id, message);
@@ -164,7 +183,11 @@ bot.on('message', function(msg) {
     verifyUser(user.id);
     return handleUnRevokeUserConfirm(user.id, message);
   }
-
+  
+  /*
+   * Sonarr states   
+   */
+  
   if (currentState === state.sonarr.CONFIRM) {
     verifyUser(user.id);
     logger.info(i18n.__('botChatQuerySeriesConfirm', user.id, message));
@@ -204,6 +227,16 @@ bot.on('message', function(msg) {
   if (currentState === state.sonarr.ADD_SERIES) {
     verifyUser(user.id);
     return sonarr.sendAddSeries(message);
+  }
+
+  /*
+   * CouchPotato states   
+   */
+  
+  if (currentState === state.couchpotato.CONFIRM) {
+    verifyUser(user.id);
+    logger.info(i18n.__('botChatQuerySeriesConfirm', user.id, message));
+    return couchpotato.confirmMovieSelect(message);
   }
 
 });
@@ -400,15 +433,18 @@ bot.onText(/\/clear/, function(msg) {
   var fromId = msg.from.id;
   
   if(isAuthorized(fromId)){
-    logger.info('user: %s, message: sent \'/clear\' command', fromId);
+    
+    var username = getTelegramName(fromId);
+    
+    logger.info(i18n.__('logChatClearing', username));
     clearCache(fromId);
-    logger.info('user: %s, message: \'/clear\' command successfully executed', fromId);
+    logger.info(i18n.__('logChatCleared', username));
 
     return bot.sendMessage(fromId, 'All previously sent commands have been cleared, yey!', {
       'reply_markup': {
         'hide_keyboard': true
       }
-     });
+    });
    } else {
      return replyWithError(fromId, new Error(i18n.__('notAuthorized')))
    }
@@ -639,8 +675,9 @@ function clearCache(userId) {
     'seriesMonitorId', 'seriesMonitorList', 'seriesFolderId',
     'seriesFolderList', 'seriesTypeId', 'seriesTypeList',
     'seriesSeasonFolderList',
+    'movieId', 'movieList', 'movieProfileList',
     'revokedUserName', 'revokeUserList',
-    'state'
+    'state', 
   ];
 
   _(cacheItems).forEach(function(item) {
@@ -669,7 +706,7 @@ function getTelegramName(user) {
  * Send Commands To chat
  */
 function sendCommands(fromId) {
-  var response = ['Hello ' + getTelegramName(fromId) + '!'];
+  var response = [i18n.__('hello') + ' ' + getTelegramName(fromId) + ' !'];
   response.push(i18n.__('botChatHelp_1'));
   response.push(i18n.__('botChatHelp_2'));
   response.push(i18n.__('botChatHelp_3'));

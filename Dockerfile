@@ -8,4 +8,4 @@ RUN npm install
 
 COPY . ./
 
-CMD ["node", "sonarr.js"]
+CMD ["node", "app.js"]

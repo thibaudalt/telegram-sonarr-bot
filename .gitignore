@@ -1,6 +1,7 @@
+.DS_Store
+.foreverignore
 node_modules/
 config.json
-.DS_Store
 acl.json
 sonarr.log
 nbproject/

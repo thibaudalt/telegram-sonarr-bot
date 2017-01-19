@@ -57,7 +57,7 @@ Sonarr:
 
 ```bash
 # Start the bot
-node sonarr.js
+node app.js
 ```
 
 ## Usage (commands)
@@ -134,7 +134,7 @@ Sonarr can be setup to send notifications to a user or a group chat when new con
 * In the Name field enter `Telegram`
 * In the Path field enter the full path to your node.js installation i.e. `C:\Program Files\nodejs\node.exe`
 * In the Arguments field enter the full path to `sonarr_notify.js` i.e `C:\bots\telegram-sonarr-bot\sonarr_notify.js`
-* Start the bot by running `node sonarr.js`
+* Start the bot by running `node app.js`
 * Open a new chat or group chat with the bot and type `/cid` 
 * Note the Chat ID
 * Open `config.json` and enter the Chat ID next to `notifyId`
