@@ -228,7 +228,8 @@ docker run --name telegram-couchpotato-sonarr-bot \
 ## License
 (The MIT License)
 
-Copyright (c) 2015 Thibaud Alt <thibaud.alt@gmail.com>
+Copyright (c) 2017 Thibaud Alt <thibaud.alt@gmail.com>
+Copyright (c) 2015 Devin Buhl devin.kray@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
