@@ -17,5 +17,14 @@
     "ssl": false,
     "username": "",
     "password": ""
+  },
+  "couchpotato": {
+    "hostname": "",
+    "apiKey": "",
+    "port": 5050,
+    "urlBase": "",
+    "ssl": false,
+    "username": "",
+    "password": ""
   }
 }

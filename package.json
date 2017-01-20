@@ -1,7 +1,7 @@
 {
-  "name": "telegram-sonarr-bot",
+  "name": "telegram-couchpotato-sonarr-bot",
   "version": "0.3.0",
-  "description": "A Telegram bot to interact with your Sonarr Web App",
+  "description": "A Telegram bot to interact with your Sonarr and CouchPotato Web Apps",
   "dependencies": {
     "bluebird": "^3.4.7",
     "couchpotato-api": "^0.1.0",
@@ -15,15 +15,16 @@
     "sonarr-api": "^0.1.2",
     "winston": "^2.3.0"
   },
-  "repository": "git://github.com/onedr0p/telegram-sonarr-bot",
+  "repository": "git://github.com/thibaudalt/telegram-couchpotato-sonarr-bot",
   "keywords": [
+    "telegram",
     "sonarr",
-    "telegram"
+    "couchpotato"
   ],
   "engines": {
     "node": ">=0.10"
   },
-  "author": "Devin Buhl <devin.kray@gmail.com>",
+  "author": "Thibaud Alt <thibuad.alt@gmail.com>",
   "license": "MIT",
   "scripts": {
     "start": "node app.js"

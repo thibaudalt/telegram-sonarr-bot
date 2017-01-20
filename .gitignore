@@ -1,7 +1,8 @@
 .DS_Store
 .foreverignore
+nbproject/
 node_modules/
 config.json
 acl.json
+couchpotato.log
 sonarr.log
-nbproject/
