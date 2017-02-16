@@ -2,18 +2,18 @@
 
 'use strict';
 
-var _               = require('lodash');                    // https://www.npmjs.com/package/lodash
-var moment          = require('moment');                    // https://www.npmjs.com/package/moment
-var CouchPotatoAPI  = require('couchpotato-api');           // https://www.npmjs.com/package/couchpotato-api
+var _                 = require('lodash');            // https://www.npmjs.com/package/lodash
+var moment            = require('moment');            // https://www.npmjs.com/package/moment
+var CouchPotatoAPI    = require('couchpotato-api');   // https://www.npmjs.com/package/couchpotato-api
 
 /*
  * libs
  */
-var i18n   = require(__dirname + '/../lib/lang');          // set up multilingual support
-var config = require(__dirname + '/../lib/config');        // the concised configuration
-var state  = require(__dirname + '/../lib/state');         // handles command structure
-var logger = require(__dirname + '/../lib/logger');        // logs to file and console
-var acl    = require(__dirname + '/../lib/acl');           // set up the acl file
+var i18n      = require(__dirname + '/../lib/lang');      // set up multilingual support
+var config    = require(__dirname + '/../lib/config');    // the concised configuration
+var state     = require(__dirname + '/../lib/state');     // handles command structure
+var logger    = require(__dirname + '/../lib/logger');    // logs to file and console
+var acl       = require(__dirname + '/../lib/acl');       // set up the acl file
 
 /*
  * initalize the class
@@ -43,20 +43,20 @@ function CouchPotatoMessage(bot, user, cache) {
 CouchPotatoMessage.prototype.sendMoviesList = function(movieName) {
   var self = this;
   
-  logger.info(i18n.__('logSonarrMovieCommandSent', self.username));
+  logger.info(i18n.__('logCouchPotatoQueryCommandSent', self.username));
   
   self.couchpotato.get('movie.search', { 'q': movieName }).then(function(result) {
       
       if (!result.movies) {
-        throw new Error('Could not find ' + movieName + ', try searching again');
+        throw new Error(i18n.__('errorCouchPotatoMovieNotFound', movieName));
       }
   
       var movies = result.movies;
 
-      logger.info(i18n.__('logSonarrUserMovieRequested', self.username, movieName));
+      logger.info(i18n.__('logCouchPotatoUserMovieRequested', self.username, movieName));
   
       var movieList = [], keyboardList = [];
-      var response = [i18n.__('botChatSonarrFoundNMovies', movies.length)];
+      var response = [i18n.__('botChatCouchPotatoFoundMovies', movies.length)];
   
       _.forEach(movies, function(n, key) {
   
@@ -120,6 +120,36 @@ CouchPotatoMessage.prototype.confirmMovieSelect = function(displayName) {
   
   // TO CONTINUE !!!!
   
+};
+
+/*
+ * private methods
+ */
+CouchPotatoMessage.prototype._sendMessage = function(message, keyboard) {
+  var self = this;
+  keyboard = keyboard || null;
+
+  var options;
+  if (message instanceof Error) {
+    logger.warn(i18n.__("logMessageClear", self.username, message.message));
+
+    message = message.message;
+    options = {
+      'parse_mode': 'Markdown',
+      'reply_markup': {
+        'hide_keyboard': true
+      }
+    };
+  } else {
+    options = {
+      // 'disable_web_page_preview': true,
+      'parse_mode': 'Markdown',
+      'selective': 2,
+      'reply_markup': JSON.stringify( { keyboard: keyboard, one_time_keyboard: true })
+    };
+  }
+
+  return self.bot.sendMessage(self.user.id, message, options);
 };
 
 module.exports = CouchPotatoMessage;

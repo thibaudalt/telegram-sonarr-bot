@@ -2,18 +2,18 @@
 
 'use strict';
 
-var _               = require('lodash');                    // https://www.npmjs.com/package/lodash
-var moment          = require('moment');                    // https://www.npmjs.com/package/moment
-var SonarrAPI       = require('sonarr-api');                // https://www.npmjs.com/package/sonarr-api
+var _           = require('lodash');        // https://www.npmjs.com/package/lodash
+var moment      = require('moment');        // https://www.npmjs.com/package/moment
+var SonarrAPI   = require('sonarr-api');    // https://www.npmjs.com/package/sonarr-api
 
 /*
  * libs
  */
-var i18n   = require(__dirname + '/../lib/lang');          // set up multilingual support
-var config = require(__dirname + '/../lib/config');        // the concised configuration
-var state  = require(__dirname + '/../lib/state');         // handles command structure
-var logger = require(__dirname + '/../lib/logger');        // logs to file and console
-var acl    = require(__dirname + '/../lib/acl');           // set up the acl file
+var i18n      = require(__dirname + '/../lib/lang');      // set up multilingual support
+var config    = require(__dirname + '/../lib/config');    // the concised configuration
+var state     = require(__dirname + '/../lib/state');     // handles command structure
+var logger    = require(__dirname + '/../lib/logger');    // logs to file and console
+var acl       = require(__dirname + '/../lib/acl');       // set up the acl file
 
 /*
  * initalize the class
@@ -207,7 +207,7 @@ SonarrMessage.prototype.performCalendarSearch = function(futureDays) {
 SonarrMessage.prototype.sendSeriesList = function(seriesName) {
   var self = this;
   
-  logger.info(i18n.__('logSonarrSerieCommandSent', self.username));
+  logger.info(i18n.__('logSonarrQueryCommandSent', self.username));
 
   self.sonarr.get('series/lookup', { 'term': seriesName }).then(function(result) {
     if (!result.length) {

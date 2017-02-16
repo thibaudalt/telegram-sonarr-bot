@@ -79,7 +79,7 @@ bot.on('message', function(msg) {
   var message = msg.text;
  
   var sonarr      = new SonarrMessage(bot, user, cache);
-  var couchpotato = new SonarrMessage(bot, user, cache);
+  var couchpotato = new CouchPotatoMessage(bot, user, cache);
 
   if (/^\/library\s?(.+)?$/g.test(message)) {
     if(isAuthorized(user.id)){
